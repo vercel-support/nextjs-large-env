@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
+
 export default (req, res) => {
-  console.log(process.env.NEXT_PUBLIC_VERCEL_URL);
   const algorithm = 'aes-128-cbc';
   const decipher = crypto.createDecipheriv(
     algorithm,

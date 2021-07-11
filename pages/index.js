@@ -1,22 +1,13 @@
-import service from "../service-account.enc"
+import service from "../service-account.enc";
+import useSWR from 'swr'
+import axios from 'axios';
 
-export async function getStaticProps() {
-  const res = await fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/decrypt`, {
-    method: "POST", headers: {
-      'Accept': 'application/json, text/plain, */*',
-      'Content-Type': 'application/json'
-    }, body: JSON.stringify({ data: service.encrypted })
-  });
-  let data = await res.json();
-  return {
-    props: {
-      data,
-    },
-  }
-}
+const fetchWithData = (url, encrypt) => axios.post(url, { data: encrypt }).then(res => res.data);
 
-
-export default function Home({ data }) {
+export default function Home() {
+  const { data, error } = useSWR(['/api/decrypt', service.encrypted], fetchWithData);
+  if (error) return <div>failed to load</div>
+  if (!data) return <div>loading...</div>
   return (
     <div>
       <h2>Saving large environment variables</h2>
